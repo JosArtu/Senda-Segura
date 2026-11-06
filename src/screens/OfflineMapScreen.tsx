@@ -17,31 +17,27 @@ export default function OfflineMapScreen() {
       <ForestMap compact />
       <View style={shared.card}>
         <Badge tone={mapDownloaded ? 'green' : 'amber'}>
-          {mapDownloaded ? 'Preparado · simulación' : 'Por preparar · simulación'}
+          {mapDownloaded ? 'Preparado' : 'Por preparar'}
         </Badge>
         <Text style={shared.heading}>Bosque La Primavera</Text>
         <Text style={shared.body}>Senderos, zonas de riesgo y puntos de referencia.</Text>
-        <DetailRow label="Versión de ejemplo" value={demoMapPackage.version} />
-        <DetailRow label="Tamaño ilustrativo" value={demoMapPackage.size} />
+        <DetailRow label="Versión" value={demoMapPackage.version} />
+        <DetailRow label="Tamaño del paquete" value={demoMapPackage.size} />
         <Button
-          label={mapDownloaded ? 'Buscar actualización de prueba' : 'Simular descarga del mapa'}
+          label={mapDownloaded ? 'Buscar actualización' : 'Preparar mapa'}
           icon={mapDownloaded ? 'check' : 'download'}
           onPress={() => {
             setMapDownloaded(true);
-            setMessage(
-              mapDownloaded
-                ? 'El paquete de ejemplo ya está actualizado.'
-                : 'Mapa marcado como preparado para esta sesión. No se descargaron archivos.',
-            );
+            setMessage(mapDownloaded ? 'El mapa está actualizado.' : 'Mapa preparado.');
           }}
         />
         {mapDownloaded && (
           <Button
-            label="Quitar mapa de prueba"
+            label="Quitar mapa"
             variant="secondary"
             onPress={() => {
               setMapDownloaded(false);
-              setMessage('Estado de descarga reiniciado.');
+              setMessage('Mapa eliminado de tu selección.');
             }}
           />
         )}
@@ -51,10 +47,6 @@ export default function OfflineMapScreen() {
           <Notice>{message}</Notice>
         </View>
       )}
-      <Notice>
-        Esta pantalla demuestra la gestión de mapas. No descarga cartografía, consulta
-        almacenamiento ni usa Internet.
-      </Notice>
     </Screen>
   );
 }

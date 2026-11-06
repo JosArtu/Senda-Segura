@@ -55,14 +55,14 @@ The project also requires validated information about trails, risk areas, past i
 
 ## 5. Delivery scope
 
-| Area                | Current navigation prototype                                               | Target integrated prototype                                                                         |
-| ------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| Startup and profile | Welcome/setup, optional profile, editable session data.                    | Local profile and permission handling consistent with offline access and an agreed privacy model.   |
-| Maps and trails     | SVG illustration, sample routes, simulated package preparation.            | Downloaded map packages, real GPS, validated routes/risks and rescue-vehicle access layers.         |
-| SOS                 | Category selection, review, cancellation, and explicit simulated outcomes. | GPS/profile capture, actual transmission, persistent retries, deduplication, and verified receipt.  |
-| Communications      | No device or network integration.                                          | Two to three Bluetooth/LoRa beacons, a receiving station, backend gateway, and SMS fallback.        |
-| Ranger dashboard    | Not implemented.                                                           | Protected alert map/list, notifications, incident status updates, and history.                      |
-| Evaluation          | Browser navigation tests and generated platform bundles.                   | Android/iOS device testing, radio range measurements, security evidence, and controlled user pilot. |
+| Area                | Current navigation prototype                                                                     | Target integrated prototype                                                                         |
+| ------------------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| Startup and profile | Welcome/setup, optional profile, editable session data.                                          | Local profile and permission handling consistent with offline access and an agreed privacy model.   |
+| Maps and trails     | SVG illustration, sample routes, simulated package preparation.                                  | Downloaded map packages, real GPS, validated routes/risks and rescue-vehicle access layers.         |
+| SOS                 | Category selection, review, cancellation, and local pending requests using regular product copy. | GPS/profile capture, actual transmission, persistent retries, deduplication, and verified receipt.  |
+| Communications      | No device or network integration.                                                                | Two to three Bluetooth/LoRa beacons, a receiving station, backend gateway, and SMS fallback.        |
+| Ranger dashboard    | Not implemented.                                                                                 | Protected alert map/list, notifications, incident status updates, and history.                      |
+| Evaluation          | Browser navigation tests and generated platform bundles.                                         | Android/iOS device testing, radio range measurements, security evidence, and controlled user pilot. |
 
 The integrated prototype is the academic target. Permanent installation remains a separate proposal requiring authorization and implementation resources. “Must” requirements below are necessary for that target, not claims about current functionality or authorization to implement every feature immediately.
 
@@ -121,7 +121,7 @@ FR-02's incomplete-package behavior and FR-07's restart case are acceptance clar
 | Confirmed (`confirmado`)                                                  | The agreed receiving endpoint acknowledged the alert. The source mockup uses receiving-station acknowledgment.                                              |
 | Received / in attention / closed (`recibida` / `en atención` / `cerrada`) | Separate incident states managed by authorized rangers in the dashboard.                                                                                    |
 
-A station acknowledgment, backend persistence, dashboard visibility, and a ranger beginning attention are distinct events. The final protocol must define their relationship and how acknowledgment returns to the phone. The current prototype's “recepción simulada” is only a demonstration.
+A station acknowledgment, backend persistence, dashboard visibility, and a ranger beginning attention are distinct events. The final protocol must define their relationship and how acknowledgment returns to the phone. The current app uses regular product wording and only creates pending requests; no receipt acknowledgment is generated.
 
 ## 8. Experience and quality requirements
 
@@ -133,7 +133,7 @@ A station acknowledgment, backend persistence, dashboard visibility, and a range
 | NFR-04 | Resource efficiency    | Evaluate battery, storage, and background processing during representative outings; numeric budgets remain to be established.                                         |
 | NFR-05 | Maintainability        | Keep maps, location, profile, alert state, communications, and dashboard responsibilities separable so integrations can evolve independently.                         |
 
-The source mockups propose a five-second confirmation countdown. The current skeleton uses an explicit simulation button. Countdown duration and post-submission cancellation behavior remain product decisions rather than approved requirements.
+The source mockups propose a five-second confirmation countdown. The current skeleton uses an explicit confirmation button and has no connected sending service. Countdown duration and post-submission cancellation behavior remain product decisions rather than approved requirements.
 
 ## 9. Data, security, and privacy
 

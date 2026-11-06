@@ -6,7 +6,7 @@ import { Icon } from '@/components/Icon';
 import { Screen } from '@/components/Screen';
 import { Badge, Button, Notice, SectionTitle } from '@/components/ui';
 import { colors, shared } from '@/constants/theme';
-import { demoLocation, emergencyCategories } from '@/data/demo';
+import { emergencyCategories } from '@/data/demo';
 import { useDemoSession } from '@/hooks/useDemoSession';
 import { routes } from '@/navigation/routes';
 
@@ -20,12 +20,10 @@ export default function MapScreen() {
       </Text>
       <View style={[shared.row, { flexWrap: 'wrap', gap: 8 }]}>
         <Badge tone={permissions.location ? 'green' : 'amber'}>
-          {permissions.location
-            ? `GPS de ejemplo ${demoLocation.accuracy}`
-            : 'GPS desactivado · demo'}
+          {permissions.location ? 'Ubicación en el mapa' : 'Ubicación desactivada'}
         </Badge>
         <Badge tone={mapDownloaded ? 'green' : 'amber'}>
-          {mapDownloaded ? 'Mapa preparado · demo' : 'Mapa sin preparar · demo'}
+          {mapDownloaded ? 'Mapa preparado' : 'Mapa sin preparar'}
         </Badge>
       </View>
       <ForestMap />
@@ -36,12 +34,10 @@ export default function MapScreen() {
           variant="danger"
           onPress={() => router.push(routes.emergency)}
         />
-        <Text style={styles.sosCaption}>Prueba el flujo SOS. No se contactará a rescate.</Text>
       </View>
       {!permissions.location && (
         <Notice warning>
-          La ubicación de ejemplo está desactivada. Puedes cambiarla en Perfil; no se está leyendo
-          el GPS del teléfono.
+          La ubicación está desactivada en tus preferencias. Puedes cambiarla en Perfil.
         </Notice>
       )}
       <Pressable
@@ -59,9 +55,16 @@ export default function MapScreen() {
         </View>
         <Icon name="arrow" size={20} />
       </Pressable>
-      <SectionTitle title="Tu sesión" trailing={<Badge>{alerts.length} SOS de prueba</Badge>} />
+      <SectionTitle
+        title="Tus solicitudes"
+        trailing={
+          <Badge>
+            {alerts.length} {alerts.length === 1 ? 'solicitud' : 'solicitudes'}
+          </Badge>
+        }
+      />
       {pending.length === 0 ? (
-        <Text style={shared.body}>No tienes alertas de prueba pendientes.</Text>
+        <Text style={shared.body}>No tienes solicitudes pendientes.</Text>
       ) : (
         pending.map((alert) => (
           <Pressable
@@ -76,7 +79,7 @@ export default function MapScreen() {
               <Text style={shared.label}>
                 {emergencyCategories.find((category) => category.id === alert.category)?.title}
               </Text>
-              <Text style={shared.body}>Pendiente · simulación</Text>
+              <Text style={shared.body}>Pendiente de envío</Text>
             </View>
             <Icon name="arrow" />
           </Pressable>
@@ -87,7 +90,6 @@ export default function MapScreen() {
 }
 
 const styles = StyleSheet.create({
-  sosCaption: { fontSize: 11, textAlign: 'center', color: colors.muted },
   download: {
     width: 44,
     height: 44,

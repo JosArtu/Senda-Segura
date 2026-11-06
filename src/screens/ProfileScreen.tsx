@@ -12,7 +12,7 @@ export default function ProfileScreen() {
   return (
     <Screen title="Perfil y ajustes" eyebrow="TU COMPAÑERO DE RUTA">
       <Text style={shared.body}>
-        Esta información de ejemplo acompaña tus alertas de prueba durante la sesión.
+        Mantén tus datos de contacto al día y configura tus preferencias.
       </Text>
       <ProfileForm submitLabel="Guardar cambios" />
       <PermissionControls />
@@ -31,7 +31,7 @@ export default function ProfileScreen() {
         />
       </View>
       <Text style={[shared.body, { textAlign: 'center', fontSize: 12 }]}>
-        Senda Segura · Prototipo 0.1.0{'\n'}Más Bosque Manu · Bosque La Primavera
+        Senda Segura · 0.1.0{'\n'}Más Bosque Manu · Bosque La Primavera
       </Text>
     </Screen>
   );

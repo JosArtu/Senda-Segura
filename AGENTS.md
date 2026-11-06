@@ -12,7 +12,7 @@
 - Work in this repository and inspect its current code before changing architecture. `src/app/` is reserved for route/layout files; reusable components belong outside it.
 - The current app is a navigation prototype with in-memory state. Do not silently introduce credentials, authentication gates, device permissions, or real emergency transmission.
 - Use `useDemoSession` for shared demo state and `data/demo.ts` for fixtures. Keep personal values out of URLs and use fictional values in tests.
-- Keep simulated states explicit. A real station acknowledgment, backend receipt, and ranger response are different events; none is implemented by a demo success screen.
+- Use regular product copy in the interface without prototype/demo labels, as requested. Document the disconnected implementation here and in the project docs. Requests must remain pending until a real transport can provide acknowledgment; do not claim rescue receipt.
 - Maintain Spanish UI copy, accessible labels, scrollable layouts, and usable cancellation/back paths. Avoid adding SafeReport's unrelated authentication/upload screens.
 - Read the architecture decisions and source context before implementing full-system features. Update documentation when a previously proposed contract or service becomes real.
 - Run type checking, lint, and relevant navigation checks after changes. Report native/hardware/field checks separately from browser results.

@@ -17,8 +17,8 @@ The Playwright configuration starts an Expo web server on port 8085 and uses a m
 
 - Onboarding validation, all four tabs, route details and back navigation.
 - Map preparation and profile/permission changes shared across screens.
-- Disabled progression before category selection, SOS cancellation without creating an alert, pending alerts, and simulated recovery without duplication.
-- Simulated confirmation, loss of session data after reload, and recovery from invalid category, trail, alert, or screen links.
+- Disabled progression before category selection, SOS cancellation without creating an alert, pending requests, and retry without duplication or false receipt.
+- Absence of prototype/demo UI labels, no external HTTP requests during SOS, loss of session data after reload, and recovery from invalid category, trail, alert, or screen links.
 
 Browser tests exercise the React Native Web rendition. Passing them is not evidence of Android/iOS device behavior, offline map availability, GPS accuracy, radio delivery, or project acceptance metrics.
 
@@ -28,10 +28,10 @@ Browser tests exercise the React Native Web rendition. Passing them is not evide
 2. Open setup, submit an empty form, enter a fictional name and 10–15-digit phone, and save. Verify that the map greets the entered name. Also try skipping the profile from a fresh launch.
 3. Open each tab. Open a route detail and use both the onscreen back button and the device's native back behavior. Verify that routes can still be reached afterward.
 4. Simulate map download, check for an update, and remove it. Verify that the map tab's preparation indicator changes.
-5. Edit the profile and toggle a permission of example. Verify shared state and keyboard/scroll behavior without any actual OS permission prompt.
+5. Edit the profile and toggle a connection preference. Verify shared state and keyboard/scroll behavior without any actual OS permission prompt.
 6. Open SOS. Confirm that Continue is disabled until a category is selected. Cancel from both steps and verify that no alert is created.
-7. Simulate a pending alert. Return to the map, reopen it, and simulate recovery. Verify a single alert remains and the result always says it is simulated.
-8. Try a confirmed scenario and rapidly press its send button. Verify that there is only one new demo alert and no real SMS, network request, or Bluetooth operation occurs.
+7. Create a pending request. Return to the map, reopen it, and retry. Verify a single request remains, the service-unavailable message appears, and no receipt is claimed.
+8. Rapidly press the confirmation button. Verify that there is only one new pending request and no real SMS, external network request, or Bluetooth operation occurs.
 9. Reload. Verify that profile, download state, and alerts reset. A restored result URL should explain that the session has no such alert.
 10. Check screen-reader labels, touch controls, larger system font sizes, and keyboard navigation in the web preview.
 

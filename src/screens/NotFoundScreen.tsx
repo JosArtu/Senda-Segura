@@ -7,7 +7,7 @@ import { routes } from '@/navigation/routes';
 export default function NotFoundScreen() {
   return (
     <Screen title="Ese camino no existe" back>
-      <Notice>La pantalla que buscas no forma parte de este prototipo.</Notice>
+      <Notice>No encontramos la pantalla que buscas.</Notice>
       <Button label="Volver al mapa" onPress={() => router.replace(routes.map)} />
     </Screen>
   );

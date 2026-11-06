@@ -57,9 +57,6 @@ export default function WelcomeScreen() {
           </View>
         ))}
       </View>
-      <Text style={[shared.body, { fontSize: 12, textAlign: 'center' }]}>
-        Demostración de navegación. Los mapas, permisos y envíos son simulados.
-      </Text>
     </Screen>
   );
 }

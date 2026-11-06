@@ -4,7 +4,7 @@ import { Pressable, Text, View } from 'react-native';
 
 import { Icon } from '@/components/Icon';
 import { Screen } from '@/components/Screen';
-import { Button, Notice } from '@/components/ui';
+import { Button } from '@/components/ui';
 import { colors, shared } from '@/constants/theme';
 import { emergencyCategories } from '@/data/demo';
 import { routes } from '@/navigation/routes';
@@ -35,9 +35,7 @@ export default function EmergencyScreen() {
         </>
       }
     >
-      <Text style={shared.body}>
-        Selecciona la situación que mejor describe la emergencia de prueba.
-      </Text>
+      <Text style={shared.body}>Selecciona la situación que mejor describe tu emergencia.</Text>
       {emergencyCategories.map((item) => (
         <Pressable
           key={item.id}
@@ -79,10 +77,6 @@ export default function EmergencyScreen() {
           </View>
         </Pressable>
       ))}
-      <Notice>
-        Este es un recorrido de prueba. Las categorías finales se validarán con el equipo de
-        rescate.
-      </Notice>
     </Screen>
   );
 }

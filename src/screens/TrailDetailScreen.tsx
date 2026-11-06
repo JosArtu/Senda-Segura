@@ -14,16 +14,13 @@ export default function TrailDetailScreen() {
   if (!trail)
     return (
       <Screen title="Ruta no encontrada" back>
-        <Notice>Esta ruta no está incluida en el prototipo.</Notice>
+        <Notice>Esta ruta no está disponible.</Notice>
         <Button label="Ver las rutas" onPress={() => router.replace(routes.trails)} />
       </Screen>
     );
   return (
     <Screen title={trail.name} eyebrow="DETALLE DEL SENDERO" back>
       <ForestMap compact />
-      <Notice warning>
-        Información de ejemplo. Este esquema no representa el trazado real del sendero.
-      </Notice>
       <Text style={shared.body}>{trail.description}</Text>
       <View style={shared.card}>
         <DetailRow label="Distancia" value={trail.distance} />

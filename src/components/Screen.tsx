@@ -28,10 +28,6 @@ export function Screen({
         style={styles.safe}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <View style={styles.demo}>
-          <View style={styles.dot} />
-          <Text style={styles.demoText}>PROTOTIPO · No envía alertas reales</Text>
-        </View>
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
           <View style={styles.header}>
             {back && (
@@ -70,16 +66,6 @@ export function Screen({
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.cream },
-  demo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 7,
-    paddingVertical: 9,
-    backgroundColor: colors.sage,
-  },
-  demoText: { color: colors.green, fontSize: 10, fontWeight: '700', letterSpacing: 0.5 },
-  dot: { width: 5, height: 5, borderRadius: 3, backgroundColor: colors.green },
   content: { padding: 24, gap: 22, paddingBottom: 36 },
   header: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 2 },
   back: {

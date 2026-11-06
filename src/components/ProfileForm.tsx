@@ -25,9 +25,7 @@ export function ProfileForm({
       phone.replace(/\D/g, '').length < 10 ||
       phone.replace(/\D/g, '').length > 15
     ) {
-      setMessage(
-        'Escribe un nombre y un teléfono de 10 a 15 dígitos. Puedes usar datos ficticios.',
-      );
+      setMessage('Escribe un nombre y un teléfono de 10 a 15 dígitos.');
       setError(true);
       return;
     }
@@ -45,7 +43,7 @@ export function ProfileForm({
           accessibilityLabel="Nombre"
           value={name}
           onChangeText={setName}
-          placeholder="Tu nombre de ejemplo"
+          placeholder="Tu nombre"
           placeholderTextColor={colors.muted}
           autoCapitalize="words"
           maxLength={80}
@@ -72,7 +70,7 @@ export function ProfileForm({
       )}
       <Button label={submitLabel} icon="check" onPress={save} />
       <Text style={[shared.body, { fontSize: 12 }]}>
-        Usa datos ficticios. El perfil se borra al recargar o cerrar la aplicación.
+        Tu nombre y teléfono se incluirán en los datos de tu solicitud.
       </Text>
     </View>
   );

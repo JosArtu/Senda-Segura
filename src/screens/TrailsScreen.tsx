@@ -3,7 +3,7 @@ import { Pressable, Text, View } from 'react-native';
 
 import { Icon } from '@/components/Icon';
 import { Screen } from '@/components/Screen';
-import { Badge, Notice, SectionTitle } from '@/components/ui';
+import { Badge, SectionTitle } from '@/components/ui';
 import { colors, shared } from '@/constants/theme';
 import { safetyTips, trails } from '@/data/demo';
 
@@ -13,11 +13,7 @@ export default function TrailsScreen() {
       <Text style={shared.body}>
         Cada sendero es diferente. Conoce el recorrido antes de dar el primer paso.
       </Text>
-      <Notice warning>
-        Rutas ilustrativas. Distancias, tiempos y riesgos todavía no están validados para uso en
-        campo.
-      </Notice>
-      <SectionTitle title="Senderos del bosque" trailing={<Badge>3 ejemplos</Badge>} />
+      <SectionTitle title="Senderos del bosque" trailing={<Badge>{trails.length} rutas</Badge>} />
       {trails.map((trail, index) => (
         <Pressable
           key={trail.id}

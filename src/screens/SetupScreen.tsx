@@ -18,8 +18,7 @@ export default function SetupScreen() {
   return (
     <Screen title="Antes de salir" eyebrow="TU PERFIL DE EMERGENCIA" back>
       <Text style={shared.body}>
-        Un nombre y un teléfono ayudan al equipo de rescate a identificarte. Por ahora, probaremos
-        el recorrido con datos de ejemplo.
+        Configura tu nombre y teléfono de contacto para incluirlos en tus solicitudes de ayuda.
       </Text>
       <ProfileForm submitLabel="Guardar y explorar" onSaved={explore} />
       <PermissionControls />

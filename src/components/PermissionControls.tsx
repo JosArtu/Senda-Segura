@@ -1,7 +1,6 @@
 import { Switch, Text, View } from 'react-native';
 
 import { Icon } from '@/components/Icon';
-import { Notice } from '@/components/ui';
 import { colors, shared } from '@/constants/theme';
 import { permissionOptions } from '@/data/demo';
 import { useDemoSession } from '@/hooks/useDemoSession';
@@ -11,7 +10,7 @@ export function PermissionControls() {
   return (
     <View style={shared.stack}>
       <Text accessibilityRole="header" style={shared.heading}>
-        Permisos de ejemplo
+        Preferencias de conexión
       </Text>
       {permissionOptions.map((permission) => (
         <View key={permission.id} style={[shared.card, shared.row, { padding: 16 }]}>
@@ -23,7 +22,7 @@ export function PermissionControls() {
             </Text>
           </View>
           <Switch
-            accessibilityLabel={`${permission.title} de ejemplo`}
+            accessibilityLabel={permission.title}
             value={permissions[permission.id]}
             onValueChange={() => togglePermission(permission.id)}
             trackColor={{ false: colors.border, true: colors.green }}
@@ -31,9 +30,6 @@ export function PermissionControls() {
           />
         </View>
       ))}
-      <Notice>
-        Estos controles simulan permisos. No activan el GPS, Bluetooth ni los SMS de tu teléfono.
-      </Notice>
     </View>
   );
 }

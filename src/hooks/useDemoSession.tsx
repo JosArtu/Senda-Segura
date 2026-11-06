@@ -2,7 +2,6 @@ import { createContext, useContext, useState, type PropsWithChildren } from 'rea
 
 import type {
   DemoAlert,
-  DemoOutcome,
   EmergencyCategory,
   EmergencyProfile,
   PermissionName,
@@ -23,22 +22,17 @@ function useSessionState() {
     setPermissions((previous) => ({ ...previous, [name]: !previous[name] }));
   };
 
-  const simulateAlert = (category: EmergencyCategory, outcome: DemoOutcome) => {
+  // No transport is connected. Creating a request must never imply delivery.
+  const createAlert = (category: EmergencyCategory) => {
     const alert: DemoAlert = {
-      id: `DEMO-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      id: `SS-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
       category,
-      outcome,
+      outcome: 'pending',
       createdAt: new Date().toISOString(),
       profile: { ...profile },
     };
     setAlerts((previous) => [...previous, alert]);
     return alert.id;
-  };
-
-  const confirmPendingAlert = (id: string) => {
-    setAlerts((previous) =>
-      previous.map((alert) => (alert.id === id ? { ...alert, outcome: 'confirmed' } : alert)),
-    );
   };
 
   return {
@@ -51,8 +45,7 @@ function useSessionState() {
     mapDownloaded,
     setMapDownloaded,
     alerts,
-    simulateAlert,
-    confirmPendingAlert,
+    createAlert,
   };
 }
 

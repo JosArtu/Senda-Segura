@@ -1,5 +1,4 @@
 export type EmergencyCategory = 'injury' | 'lost' | 'other';
-export type DemoOutcome = 'confirmed' | 'pending';
 export type PermissionName = 'location' | 'bluetooth' | 'sms';
 
 export interface EmergencyProfile {
@@ -10,7 +9,7 @@ export interface EmergencyProfile {
 export interface DemoAlert {
   id: string;
   category: EmergencyCategory;
-  outcome: DemoOutcome;
+  outcome: 'pending';
   createdAt: string;
   profile: EmergencyProfile;
 }

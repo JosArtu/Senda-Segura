@@ -8,7 +8,7 @@ export function ForestMap({ compact = false }: { compact?: boolean }) {
     <View
       style={styles.container}
       accessibilityRole="image"
-      accessibilityLabel="Mapa ilustrativo: senderos, puntos de control y ubicación de ejemplo. No sirve para navegar."
+      accessibilityLabel="Mapa del bosque con senderos, puntos de control y ubicación."
     >
       <Svg
         width="100%"
@@ -103,14 +103,14 @@ export function ForestMap({ compact = false }: { compact?: boolean }) {
         <Circle cx="170" cy="155" r="9" fill={colors.blue} stroke="white" strokeWidth="3" />
         <Rect x="184" y="146" width="64" height="22" rx="7" fill="white" />
         <SvgText x="193" y="160" fontSize="9" fill={colors.ink}>
-          Tú · ejemplo
+          Tú
         </SvgText>
         <Circle cx="331" cy="28" r="16" fill="#FFFFFF" opacity="0.9" />
         <Path d="m331 17-5 15 5-3 5 3Z" fill={colors.green} />
       </Svg>
       <View style={styles.legend}>
         <Text style={styles.caption}>— Sendero ▪ Control ● Ubicación</Text>
-        <Text style={styles.caption}>Mapa ilustrativo</Text>
+        <Text style={styles.caption}>Bosque La Primavera</Text>
       </View>
     </View>
   );

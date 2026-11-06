@@ -65,7 +65,7 @@ export const trails: Trail[] = [
     difficulty: 'Fácil',
     risk: 'low',
     description:
-      'Un recorrido de ejemplo junto al río, pensado para explorar la vista de rutas del prototipo.',
+      'Consulta la distancia, el tiempo estimado y la dificultad del recorrido junto al río.',
   },
   {
     id: 'los-camachos',
@@ -75,7 +75,7 @@ export const trails: Trail[] = [
     difficulty: 'Moderada',
     risk: 'medium',
     description:
-      'Una ruta ciclista de ejemplo con cambios de pendiente. La información final se validará con guardabosques.',
+      'Revisa la distancia y el nivel de dificultad antes de comenzar tu recorrido en bicicleta.',
   },
   {
     id: 'el-culebreado',
@@ -84,8 +84,7 @@ export const trails: Trail[] = [
     duration: '4 h',
     difficulty: 'Difícil',
     risk: 'high',
-    description:
-      'Un recorrido de ejemplo para representar una ruta de mayor exigencia y su información de seguridad.',
+    description: 'Planea tu tiempo y equipo para un recorrido de mayor exigencia.',
   },
 ];
 
