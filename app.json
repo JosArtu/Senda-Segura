@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "Senda Segura",
+    "slug": "senda-segura",
+    "scheme": "senda-segura",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F6F5EF",
+    "ios": { "supportsTablet": true },
+    "android": { "predictiveBackGestureEnabled": true },
+    "web": { "bundler": "metro", "output": "single" },
+    "plugins": ["expo-router"],
+    "experiments": { "typedRoutes": true }
+  }
+}

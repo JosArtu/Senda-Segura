@@ -1,0 +1,30 @@
+# Dependencies (including nested projects)
+node_modules/
+
+# Expo and generated builds
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+/android/
+/ios/
+*.tsbuildinfo
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+*.p8
+*.p12
+*.mobileprovision
+
+# Logs, test artifacts, and editor/OS files
+*.log
+coverage/
+playwright-report/
+test-results/
+.DS_Store
+.idea/
+.vscode/
