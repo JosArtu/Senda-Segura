@@ -28,6 +28,24 @@ flowchart TD
 
 The files under `src/app/` declare URL routes and layouts. They import screen implementations from `src/screens/`, keeping component/helper files outside the router's directory. Layouts register the navigation components under `src/navigation/`. The root provider survives route changes, but a full reload creates a new session.
 
+## Implemented screens
+
+| Route           | Screen and behavior                                                                                          |
+| --------------- | ------------------------------------------------------------------------------------------------------------ |
+| `/`             | Welcome/startup: begin profile setup or explore without a profile.                                           |
+| `/setup`        | Profile setup: name/phone validation, simulated permission controls, and skip option.                        |
+| `/map`          | Main map tab: illustrated forest map, demo status indicators, prominent SOS action, and pending demo alerts. |
+| `/trails`       | Routes and safety tab: three illustrative routes and safety recommendations.                                 |
+| `/trail/[id]`   | Route detail: example distance/duration/difficulty with a return path and map-preparation action.            |
+| `/offline`      | Offline maps tab: simulate preparation, update check, and removal of a map package.                          |
+| `/profile`      | Profile tab: edit the session profile, toggle example permissions, and navigate to safety/maps.              |
+| `/sos`          | Select an emergency category; Continue stays disabled until selection.                                       |
+| `/sos/confirm`  | Review profile/category, select a pending or received scenario, cancel, or explicitly simulate sending.      |
+| `/sos/result`   | Display a simulated receipt or pending state; simulate recovery and return to the map.                       |
+| Unmatched route | Recovery screen for unknown pages; invalid trail and missing-alert states also have recovery actions.        |
+
+The map, routes, coordinates, accuracy, and package size are illustrative fixtures. The **SafeReport** login/upload example in the mobile PDF is not the Senda Segura flow and has not been imported into the app.
+
 ## Navigation graph
 
 ```mermaid
