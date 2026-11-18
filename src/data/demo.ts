@@ -1,8 +1,15 @@
-import type { EmergencyCategory, PermissionName, Trail } from '@/types/domain';
+import type {
+  EmergencyCategory,
+  MapPoint,
+  PermissionName,
+  Trail,
+  TrailEvent,
+  TrailEventCategory,
+  TrailEventSource,
+} from '@/types/domain';
 
 // All values are illustrative fixtures from the concept, not field observations.
 export const demoLocation = { label: '20.6512° N, 103.5436° O', accuracy: '±8 m' };
-export const demoMapPackage = { version: '1.0', size: '148 MB' };
 
 export const emergencyCategories: {
   id: EmergencyCategory;
@@ -97,4 +104,98 @@ export const safetyTips = [
 
 export function isEmergencyCategory(value: unknown): value is EmergencyCategory {
   return emergencyCategories.some((category) => category.id === value);
+}
+
+export const trailEventLimits = { title: 60, description: 280 };
+
+export const trailEventCategories: {
+  id: TrailEventCategory;
+  title: string;
+  description: string;
+  icon: 'close' | 'mountain' | 'tree' | 'shield' | 'help' | 'pin';
+}[] = [
+  {
+    id: 'blocked',
+    title: 'Sendero bloqueado',
+    description: 'Un obstáculo impide continuar por el camino.',
+    icon: 'close',
+  },
+  {
+    id: 'washout',
+    title: 'Sendero deslavado',
+    description: 'El piso se deslavó o quedó inestable.',
+    icon: 'mountain',
+  },
+  {
+    id: 'fallen-tree',
+    title: 'Árbol caído',
+    description: 'Un árbol o una rama grande obstruye el paso.',
+    icon: 'tree',
+  },
+  {
+    id: 'closure',
+    title: 'Cierre temporal',
+    description: 'Un tramo está cerrado por ahora.',
+    icon: 'shield',
+  },
+  {
+    id: 'damaged-sign',
+    title: 'Señalización dañada',
+    description: 'Falta una señal o está caída.',
+    icon: 'help',
+  },
+  {
+    id: 'other',
+    title: 'Otro',
+    description: 'Otra condición del recorrido.',
+    icon: 'pin',
+  },
+];
+
+export const currentMapPoint: MapPoint = { x: 170, y: 155, label: 'Tu ubicación' };
+
+const mapReferencePoints: MapPoint[] = [
+  currentMapPoint,
+  { x: 100, y: 215, label: 'Cerca de CP-01' },
+  { x: 245, y: 115, label: 'Cerca de CP-02' },
+  { x: 140, y: 85, label: 'Cerca de CP-03' },
+];
+
+export function isTrailEventCategory(value: unknown): value is TrailEventCategory {
+  return trailEventCategories.some((category) => category.id === value);
+}
+
+export function trailEventTitle(event: Pick<TrailEvent, 'category' | 'customTitle'>): string {
+  if (event.category === 'other') return event.customTitle?.trim() || 'Otro';
+  return trailEventCategories.find((item) => item.id === event.category)?.title ?? 'Evento';
+}
+
+export function trailEventCause(event: Pick<TrailEvent, 'category' | 'description'>): string {
+  const text = event.description.trim();
+  if (text) return text;
+  return (
+    trailEventCategories.find((item) => item.id === event.category)?.description ??
+    'Aviso en el recorrido'
+  );
+}
+
+export function trailEventSourceLabel(source: TrailEventSource): string {
+  if (source === 'rescatista') return 'Equipo de rescate';
+  if (source === 'local') return 'En este dispositivo';
+  return 'Visitante';
+}
+
+export function labelForMapPoint(x: number, y: number): string {
+  const nearest = mapReferencePoints.reduce<{ label: string; distance: number }>(
+    (best, point) => {
+      const distance = Math.hypot(point.x - x, point.y - y);
+      return distance < best.distance ? { label: point.label, distance } : best;
+    },
+    { label: 'Punto en el mapa', distance: Number.POSITIVE_INFINITY },
+  );
+  return nearest.distance <= 28 ? nearest.label : 'Punto en el mapa';
+}
+
+export function visibleTrailEvents(localEvents: TrailEvent[]): TrailEvent[] {
+  return [...localEvents].reverse();
 }

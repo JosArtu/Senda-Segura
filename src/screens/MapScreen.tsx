@@ -4,15 +4,17 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { ForestMap } from '@/components/ForestMap';
 import { Icon } from '@/components/Icon';
 import { Screen } from '@/components/Screen';
+import { TrailEventRow } from '@/components/TrailEventRow';
 import { Badge, Button, Notice, SectionTitle } from '@/components/ui';
 import { colors, shared } from '@/constants/theme';
-import { emergencyCategories } from '@/data/demo';
+import { emergencyCategories, visibleTrailEvents } from '@/data/demo';
 import { useDemoSession } from '@/hooks/useDemoSession';
 import { routes } from '@/navigation/routes';
 
 export default function MapScreen() {
-  const { profile, permissions, mapDownloaded, alerts } = useDemoSession();
+  const { profile, permissions, alerts, trailEvents } = useDemoSession();
   const pending = alerts.filter((alert) => alert.outcome === 'pending');
+  const events = visibleTrailEvents(trailEvents);
   return (
     <Screen title="Encuentra tu camino" eyebrow="BOSQUE LA PRIMAVERA">
       <Text style={[shared.body, { marginTop: -12 }]}>
@@ -22,17 +24,21 @@ export default function MapScreen() {
         <Badge tone={permissions.location ? 'green' : 'amber'}>
           {permissions.location ? 'Ubicación en el mapa' : 'Ubicación desactivada'}
         </Badge>
-        <Badge tone={mapDownloaded ? 'green' : 'amber'}>
-          {mapDownloaded ? 'Mapa preparado' : 'Mapa sin preparar'}
-        </Badge>
+        <Badge tone="amber">Mapa sin preparar</Badge>
       </View>
-      <ForestMap />
+      <ForestMap markers={events} />
       <View style={{ gap: 8 }}>
         <Button
           label="Pedir ayuda"
           icon="shield"
           variant="danger"
           onPress={() => router.push(routes.emergency)}
+        />
+        <Button
+          label="Reportar un evento"
+          icon="pin"
+          variant="secondary"
+          onPress={() => router.push(routes.reportEvent)}
         />
       </View>
       {!permissions.location && (
@@ -55,6 +61,19 @@ export default function MapScreen() {
         </View>
         <Icon name="arrow" size={20} />
       </Pressable>
+      <SectionTitle
+        title="Avisos del recorrido"
+        trailing={
+          <Badge>
+            {events.length} {events.length === 1 ? 'aviso' : 'avisos'}
+          </Badge>
+        }
+      />
+      {events.length === 0 ? (
+        <Text style={shared.body}>Todavía no hay avisos en tu mapa.</Text>
+      ) : (
+        events.map((event) => <TrailEventRow key={event.id} event={event} />)
+      )}
       <SectionTitle
         title="Tus solicitudes"
         trailing={

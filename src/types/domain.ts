@@ -23,3 +23,30 @@ export interface Trail {
   risk: 'low' | 'medium' | 'high';
   description: string;
 }
+
+export type TrailEventCategory =
+  'blocked' | 'washout' | 'fallen-tree' | 'closure' | 'damaged-sign' | 'other';
+
+export type TrailEventSource = 'visitante' | 'rescatista' | 'local';
+
+export interface MapPoint {
+  x: number;
+  y: number;
+  label: string;
+}
+
+export interface TrailEventDraft {
+  category: TrailEventCategory;
+  customTitle?: string;
+  description: string;
+}
+
+export interface TrailEvent {
+  id: string;
+  category: TrailEventCategory;
+  customTitle?: string;
+  description: string;
+  point: MapPoint;
+  source: TrailEventSource;
+  createdAt: string;
+}

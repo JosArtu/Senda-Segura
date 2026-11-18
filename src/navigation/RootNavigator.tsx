@@ -8,6 +8,7 @@ export function RootNavigator() {
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="trail/[id]" />
       <Stack.Screen name="sos" />
+      <Stack.Screen name="eventos" />
       <Stack.Screen name="+not-found" />
     </Stack>
   );

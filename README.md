@@ -9,6 +9,7 @@ The planned system connects visitors with park rangers through a mobile app, Blu
 - **Map and navigation:** explore an illustrated forest map and view location indicators.
 - **Routes and safety:** browse trail details and recommendations before a trip.
 - **Offline map management:** preview map preparation and update flows.
+- **Trail events:** describe a trail condition, place it on the map, and review visitor and rescue reports included with the prepared map.
 - **Emergency profile:** manage the name and contact information associated with an alert.
 - **SOS flow:** select an emergency, review the details, and follow its delivery status.
 

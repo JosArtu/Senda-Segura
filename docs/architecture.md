@@ -6,7 +6,9 @@
 
 The interface uses regular product wording without prototype/demo banners. All services remain disconnected. Creating an SOS request records it in memory with a pending status; retry reports that the sending service is unavailable and never produces a receipt. Technical limitations are documented here rather than shown as demo labels throughout the app.
 
-This assignment implements the mobile navigation and screen skeleton. All profile, permission, map-download, and alert state is held in React memory. No storage SDK, HTTP client, authentication provider, GPS, Bluetooth, SMS, map provider, or backend is connected.
+This assignment implements the mobile navigation and screen skeleton. All profile, permission, map-download, alert, and trail-event state is held in React memory. No storage SDK, HTTP client, authentication provider, GPS, Bluetooth, SMS, map provider, or backend is connected.
+
+Trail events saved during the session stay on this device and are not transmitted. The offline tab no longer includes an example map package, version, or update check. Download and updates of that package are left for the backend.
 
 ```mermaid
 flowchart TD
@@ -32,19 +34,22 @@ The files under `src/app/` declare URL routes and layouts. They import screen im
 
 ## Implemented screens
 
-| Route           | Screen and behavior                                                                                     |
-| --------------- | ------------------------------------------------------------------------------------------------------- |
-| `/`             | Welcome/startup: begin profile setup or explore without a profile.                                      |
-| `/setup`        | Profile setup: name/phone validation, simulated permission controls, and skip option.                   |
-| `/map`          | Main map tab: illustrated forest map, status indicators, prominent SOS action, and pending demo alerts. |
-| `/trails`       | Routes and safety tab: three illustrative routes and safety recommendations.                            |
-| `/trail/[id]`   | Route detail: example distance/duration/difficulty with a return path and map-preparation action.       |
-| `/offline`      | Offline maps tab: simulate preparation, update check, and removal of a map package.                     |
-| `/profile`      | Profile tab: edit the session profile, toggle example permissions, and navigate to safety/maps.         |
-| `/sos`          | Select an emergency category; Continue stays disabled until selection.                                  |
-| `/sos/confirm`  | Review profile/category, cancel, or create a pending request.                                           |
-| `/sos/result`   | Display a pending request; retry without sending and return to the map.                                 |
-| Unmatched route | Recovery screen for unknown pages; invalid trail and missing-alert states also have recovery actions.   |
+| Route             | Screen and behavior                                                                                           |
+| ----------------- | ------------------------------------------------------------------------------------------------------------- |
+| `/`               | Welcome/startup: begin profile setup or explore without a profile.                                            |
+| `/setup`          | Profile setup: name/phone validation, simulated permission controls, and skip option.                         |
+| `/map`            | Main map tab: illustrated forest map, status indicators, prominent SOS action, and pending demo alerts.       |
+| `/trails`         | Routes and safety tab: three illustrative routes and safety recommendations.                                  |
+| `/trail/[id]`     | Route detail: example distance/duration/difficulty with a return path and map-preparation action.             |
+| `/offline`        | Offline maps tab: describes the package. Download and update are not available in the app.                    |
+| `/profile`        | Profile tab: edit the session profile, toggle example permissions, and navigate to safety/maps.               |
+| `/sos`            | Select an emergency category; Continue stays disabled until selection.                                        |
+| `/sos/confirm`    | Review profile/category, cancel, or create a pending request.                                                 |
+| `/sos/result`     | Display a pending request; retry without sending and return to the map.                                       |
+| `/eventos`        | Choose a trail-event type. A name and description are required only for “Otro”.                               |
+| `/eventos/ubicar` | Place the event by tapping the map or using the current location, then save it on this device.                |
+| `/eventos/[id]`   | Event detail for a report saved on this device. An unknown id returns to the map.                             |
+| Unmatched route   | Recovery screen for unknown pages; invalid trail, event, and missing-alert states also have recovery actions. |
 
 The map, routes, coordinates, accuracy, and package size are illustrative fixtures. The **SafeReport** login/upload example in the mobile PDF is not the Senda Segura flow and has not been imported into the app.
 
@@ -71,11 +76,17 @@ flowchart TD
     Confirm -->|Cancel| Map
     Result -->|Return| Map
     Map -->|Open pending demo alert| Result
+    Map -->|Report an event| Report["/eventos — Type and description"]
+    Report -->|Continue| Place["/eventos/ubicar — Place on map"]
+    Report -->|Cancel| Map
+    Place -->|Save on this device| EventDetail["/eventos/:id — Event detail"]
+    Place -->|Cancel| Map
+    EventDetail -->|Return| Map
 ```
 
-Tabs are reserved for frequent destinations. SOS screens live above the tabs so the user can focus on the flow. Back returns to the previous screen; cancellation dismisses the SOS flow to the map. Confirmation is replaced by the result to avoid returning directly to a submitted form. A synchronous guard also prevents duplicate records from rapid presses.
+Tabs are reserved for frequent destinations. SOS and trail-event screens live above the tabs so the user can focus on each flow. Back returns to the previous screen; cancellation dismisses the flow to the map. Confirmation is replaced by the result to avoid returning directly to a submitted form. A synchronous guard also prevents duplicate records from rapid presses.
 
-Only category IDs, trail IDs, and opaque demo alert IDs appear in route parameters. Names, phone numbers, and other profile values stay in memory. Unknown categories redirect to category selection. Missing alerts after a reload and unknown trails have recovery screens.
+Only category IDs, trail IDs, and opaque alert or event IDs appear in route parameters. Names, phone numbers, event descriptions, and other profile values stay in memory. Unknown categories redirect to category selection. A trail-event draft is required before placement. Missing alerts after a reload, unknown trails, and unknown events have recovery screens.
 
 ## Architecture decisions
 
@@ -84,7 +95,7 @@ Only category IDs, trail IDs, and opaque demo alert IDs appear in route paramete
 | ADR-001 | React Native + Expo SDK 58, TypeScript, and **Expo Router**.                                    | Matches the current class example and gives one app for Android/iOS plus a browser preview. Expo is the toolchain; React Native is the UI platform; Expo Router is the navigation choice. It is not a choice between Expo and React Native as competing navigation libraries.           |
 | ADR-002 | File-based routes, a root stack, and four JavaScript tabs.                                      | Files map directly to the logical navigation schema. Stacks support forward/back SOS steps; tabs expose the map, safety content, downloads, and profile. Use Expo Router APIs consistently rather than adding a second navigation container.                                            |
 | ADR-003 | Thin route files and separate screens/components/data/hooks/constants/navigation/types folders. | Route discovery cannot mistake helpers for screens. Shared UI stays reusable, fixtures stay replaceable, and navigation policy has a clear home.                                                                                                                                        |
-| ADR-004 | One small React context for temporary demo state.                                               | The assignment explicitly permits omitting storage and backends. A context is sufficient for cross-screen edits without introducing a state library or accidentally promising persistence. Restarting loses the profile and all alerts.                                                 |
+| ADR-004 | One small React context for temporary demo state.                                               | The assignment explicitly permits omitting storage and backends. A context is sufficient for cross-screen edits without introducing a state library or accidentally promising persistence. Restarting loses the profile, alerts, and local trail events.                                |
 | ADR-005 | An illustrated SVG map and disconnected transport/permission controls.                          | Demonstrates the conceptual screens without map keys, downloads, radio hardware, or OS permission prompts. The interface uses product copy; fixtures and temporary state remain documented as simulated. Alert status never claims rescue receipt.                                      |
 | ADR-006 | Explicit confirmation button in this skeleton.                                                  | The PDFs propose a five-second countdown pending rescue-team validation. This implementation uses a deliberate “Solicitar ayuda” action so reviewers can inspect confirmation and cancel deterministically. A real countdown is deferred with its cancellation/acknowledgment protocol. |
 | ADR-007 | No login gate; profile setup is skippable.                                                      | The project mockups favor local startup and emergency access. SafeReport's login/registration example is not the Senda Segura contract. Future identity design must preserve the offline requirements.                                                                                  |

@@ -50,10 +50,11 @@ test('profile setup validates input and tab navigation shares session state', as
   await page.getByRole('button', { name: 'Volver', exact: true }).click();
   await page.getByRole('tab', { name: 'Sin conexión', exact: true }).click();
   await expectProductCopy(page);
-  await page.getByRole('button', { name: 'Preparar mapa' }).click();
-  await expectProductCopy(page);
+  await expect(
+    page.getByText('La descarga y la actualización del mapa todavía no están disponibles'),
+  ).toBeVisible();
   await page.getByRole('tab', { name: 'Mapa', exact: true }).click();
-  await expect(page.getByText('Mapa preparado', { exact: true })).toBeVisible();
+  await expect(page.getByText('Mapa sin preparar', { exact: true })).toBeVisible();
   await page.getByRole('tab', { name: 'Perfil', exact: true }).click();
   await expect(page.getByRole('textbox', { name: 'Nombre', exact: true })).toHaveValue('Visitante');
   await page.getByRole('textbox', { name: 'Nombre', exact: true }).fill('Perfil editado');
@@ -99,6 +100,68 @@ test('SOS cancellation and retry stay local without claiming receipt', async ({ 
   await page.getByRole('button', { name: 'Volver al mapa' }).click();
   await expect(page.getByText('1 solicitud')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Ver alerta pendiente' })).toHaveCount(1);
+  expect(externalRequests).toEqual([]);
+});
+
+test('trail events stay on this device without a packaged map', async ({ page }) => {
+  const externalRequests: string[] = [];
+  page.on('request', (request) => {
+    const url = new URL(request.url());
+    if (url.protocol.startsWith('http') && !['127.0.0.1', 'localhost'].includes(url.hostname)) {
+      externalRequests.push(request.url());
+    }
+  });
+  await enterMap(page);
+  await page.getByRole('button', { name: 'Reportar un evento', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Continuar', exact: true })).toBeDisabled();
+  await page.getByRole('radio', { name: 'Sendero bloqueado' }).click();
+  await expect(page.getByRole('button', { name: 'Continuar', exact: true })).toBeEnabled();
+  await page.getByRole('button', { name: 'Cancelar y volver al mapa' }).click();
+  await expect(page.getByText('0 avisos', { exact: true })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Reportar un evento', exact: true }).click();
+  await page.getByRole('radio', { name: 'Sendero bloqueado' }).click();
+  await page.getByRole('button', { name: 'Continuar', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Ubica el aviso' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Guardar aviso', exact: true })).toBeDisabled();
+  await page.getByRole('button', { name: 'Cancelar y volver al mapa' }).click();
+  await expect(page.getByText('0 avisos', { exact: true })).toBeVisible();
+  await expectProductCopy(page);
+
+  await page.getByRole('button', { name: 'Reportar un evento', exact: true }).click();
+  await page.getByRole('radio', { name: 'Sendero bloqueado' }).click();
+  await page.getByRole('button', { name: 'Continuar', exact: true }).click();
+  await page.getByRole('button', { name: 'Tu ubicación', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Guardar aviso', exact: true })).toBeEnabled();
+  await page.getByRole('button', { name: 'Guardar aviso', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Aviso guardado' })).toBeVisible();
+  await expect(page.getByText('guardado en este dispositivo', { exact: false })).toBeVisible();
+  await expectProductCopy(page);
+  await page.getByRole('button', { name: 'Volver al mapa' }).click();
+  await expect(page.getByText('1 aviso', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Ver aviso Sendero bloqueado' })).toBeVisible();
+  await page.getByRole('button', { name: 'Abrir aviso Sendero bloqueado' }).click();
+  await expect(
+    page.getByText('Un obstáculo impide continuar por el camino.').filter({ visible: true }),
+  ).toBeVisible();
+  await expect(page.getByText('Equipo de rescate', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('Sendero deslavado', { exact: true })).toHaveCount(0);
+
+  await page.getByRole('tab', { name: 'Sin conexión', exact: true }).click();
+  await expect(
+    page.getByText('La descarga y la actualización del mapa todavía no están disponibles'),
+  ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Preparar mapa' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Buscar actualización' })).toHaveCount(0);
+  await expect(page.getByText('Señalización dañada', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('Equipo de rescate', { exact: true })).toHaveCount(0);
+  await page.getByRole('tab', { name: 'Mapa', exact: true }).click();
+  await expect(page.getByText('1 aviso', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Ver aviso Sendero bloqueado' })).toBeVisible();
+
+  await page.goto('/eventos/missing');
+  await expect(page.getByRole('heading', { name: 'Aviso no disponible' })).toBeVisible();
+  await expectProductCopy(page);
   expect(externalRequests).toEqual([]);
 });
 

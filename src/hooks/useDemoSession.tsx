@@ -4,7 +4,10 @@ import type {
   DemoAlert,
   EmergencyCategory,
   EmergencyProfile,
+  MapPoint,
   PermissionName,
+  TrailEvent,
+  TrailEventDraft,
 } from '@/types/domain';
 
 function useSessionState() {
@@ -15,8 +18,9 @@ function useSessionState() {
     bluetooth: true,
     sms: false,
   });
-  const [mapDownloaded, setMapDownloaded] = useState(false);
   const [alerts, setAlerts] = useState<DemoAlert[]>([]);
+  const [trailEventDraft, setTrailEventDraft] = useState<TrailEventDraft | null>(null);
+  const [trailEvents, setTrailEvents] = useState<TrailEvent[]>([]);
 
   const togglePermission = (name: PermissionName) => {
     setPermissions((previous) => ({ ...previous, [name]: !previous[name] }));
@@ -35,6 +39,26 @@ function useSessionState() {
     return alert.id;
   };
 
+  // Local only. Creating a trail event does not publish it to other people.
+  const createTrailEvent = (draft: TrailEventDraft, point: MapPoint) => {
+    const description = draft.description.trim();
+    const customTitle = draft.customTitle?.trim();
+    if (draft.category === 'other' && (!description || !customTitle)) return null;
+    if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) return null;
+    const event: TrailEvent = {
+      id: `AV-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      category: draft.category,
+      customTitle: draft.category === 'other' ? customTitle : undefined,
+      description,
+      point,
+      source: 'local',
+      createdAt: new Date().toISOString(),
+    };
+    setTrailEvents((previous) => [...previous, event]);
+    setTrailEventDraft(null);
+    return event.id;
+  };
+
   return {
     profile,
     setProfile,
@@ -42,10 +66,12 @@ function useSessionState() {
     setHasStarted,
     permissions,
     togglePermission,
-    mapDownloaded,
-    setMapDownloaded,
     alerts,
     createAlert,
+    trailEventDraft,
+    setTrailEventDraft,
+    trailEvents,
+    createTrailEvent,
   };
 }
 

@@ -8,4 +8,7 @@ export const routes = {
   emergency: '/sos',
   confirm: '/sos/confirm',
   result: '/sos/result',
+  reportEvent: '/eventos',
+  placeEvent: '/eventos/ubicar',
+  trailEvent: '/eventos/[id]',
 } as const;
