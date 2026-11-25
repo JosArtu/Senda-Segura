@@ -13,7 +13,7 @@ The planned system connects visitors with park rangers through a mobile app, Blu
 - **Emergency profile:** manage the name and contact information associated with an alert.
 - **SOS flow:** select an emergency, review the details, and follow its delivery status.
 
-**Status:** this repository contains an interactive mobile prototype. Maps, permissions, and emergency delivery are simulated, and data is kept in memory for the current session. Backend services and device integrations are planned for future development.
+**Status:** this repository contains an interactive mobile prototype. Maps, permissions, and emergency delivery are simulated, and data is kept in memory for the current session. `backend/` contains an experimental server that queues configuration commands to a LoRaWAN test device through The Things Network. It does not carry emergency alerts. The emergency API, ranger dashboard, and other device integrations are planned for future development.
 
 ## Built with
 
@@ -42,6 +42,19 @@ npm run web
 
 Android and iOS require the corresponding emulator or simulator setup. The iOS simulator requires macOS. No API keys or backend configuration are needed for the prototype.
 
+### Optional: LoRaWAN downlink server
+
+Needed only to try the "Enviar comando" button on the setup screen.
+
+```sh
+cd backend
+npm ci
+cp .env.example .env   # then fill in TTN_APP_ID and TTN_API_KEY
+npm start              # listens on http://localhost:3000
+```
+
+Then, in a root `.env`, set `EXPO_PUBLIC_API_URL` to the server address as the phone sees it (for example `http://192.168.1.20:3000`), and restart Expo. Never commit either `.env` file. See [the downlink proxy](docs/architecture.md#lorawan-downlink-proxy) for the API and its limitations.
+
 ## Project structure
 
 ```text
@@ -52,8 +65,10 @@ src/
 ├── components/   # Shared interface components
 ├── hooks/        # Session state
 ├── data/         # Demo content
+├── services/     # HTTP client for the downlink server
 ├── constants/    # Theme and shared styles
 └── types/        # Domain types
+backend/          # Express server that proxies LoRaWAN downlinks to TTN
 docs/             # Project and technical documentation
 tests/            # Navigation tests
 ```

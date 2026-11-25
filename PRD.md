@@ -60,7 +60,7 @@ The project also requires validated information about trails, risk areas, past i
 | Startup and profile | Welcome/setup, optional profile, editable session data.                                          | Local profile and permission handling consistent with offline access and an agreed privacy model.   |
 | Maps and trails     | SVG illustration and sample routes. Map download and updates are left for the backend.           | Downloaded map packages, real GPS, validated routes/risks and rescue-vehicle access layers.         |
 | SOS                 | Category selection, review, cancellation, and local pending requests using regular product copy. | GPS/profile capture, actual transmission, persistent retries, deduplication, and verified receipt.  |
-| Communications      | No device or network integration.                                                                | Two to three Bluetooth/LoRa beacons, a receiving station, backend gateway, and SMS fallback.        |
+| Communications      | Experimental TTN downlink proxy for LoRaWAN device configuration; no alert transmission.         | Two to three Bluetooth/LoRa beacons, a receiving station, backend gateway, and SMS fallback.        |
 | Ranger dashboard    | Not implemented.                                                                                 | Protected alert map/list, notifications, incident status updates, and history.                      |
 | Evaluation          | Browser navigation tests and generated platform bundles.                                         | Android/iOS device testing, radio range measurements, security evidence, and controlled user pilot. |
 

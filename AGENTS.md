@@ -11,6 +11,7 @@
 
 - Work in this repository and inspect its current code before changing architecture. `src/app/` is reserved for route/layout files; reusable components belong outside it.
 - The current app is a navigation prototype with in-memory state. Do not silently introduce credentials, authentication gates, device permissions, or real emergency transmission.
+- `backend/` is a separate Node project (its own `package.json`) that proxies LoRaWAN downlinks to The Things Network. TTN credentials live only in `backend/.env` (template: `backend/.env.example`). Never put secrets in `EXPO_PUBLIC_*` variables, and never route SOS alerts through this proxy or treat its 202 as delivery. See the architecture doc's downlink-proxy section.
 - Use `useDemoSession` for shared demo state and `data/demo.ts` for fixtures. Keep personal values out of URLs and use fictional values in tests.
 - Use regular product copy in the interface without prototype/demo labels, as requested. Document the disconnected implementation here and in the project docs. Requests must remain pending until a real transport can provide acknowledgment; do not claim rescue receipt.
 - Maintain Spanish UI copy, accessible labels, scrollable layouts, and usable cancellation/back paths. Avoid adding SafeReport's unrelated authentication/upload screens.
