@@ -25,7 +25,15 @@ Browser tests exercise the React Native Web rendition. Passing them is not evide
 
 ## Backend checks
 
-The downlink proxy in `backend/` has no automated test suite yet. Test it without contacting TTN by preloading a stub that replaces `fetch`. Save it outside the repository, for example as `/tmp/mock-fetch.mjs`:
+```sh
+cd backend
+npm ci
+npm test
+```
+
+`backend/test/downlink.test.js` uses `node:test` and injects a fake `fetch` into `createApp`, so no request reaches TTN and no credentials are needed. It covers both commands and their payloads, the TTN URL and headers, interval boundaries, unknown and inherited command names, invalid `devId` values (including path traversal), malformed or non-JSON bodies, TTN rejection and network failure, and the CORS allowlist. Add a case there for every new command or input field.
+
+To exercise the real `server.js` entry point by hand, preload a stub that replaces `fetch`. Save it outside the repository, for example as `/tmp/mock-fetch.mjs`:
 
 ```js
 globalThis.fetch = async (url, init = {}) => {
@@ -49,8 +57,6 @@ curl -s -X POST http://localhost:3000/api/downlink \
   -H 'Content-Type: application/json' \
   -d '{"devId":"prueba-abp","command":"setInterval","value":60}'
 ```
-
-Cover, at minimum: each allowlisted command and its hex payload, boundary values (0, 65535, 65536, negative, missing, non-numeric), unknown and inherited command names (`borrar`, `toString`), missing or malformed `devId`, a non-JSON body, TTN rejecting the request (403), and a network failure. Check that the TTN URL, `Authorization` header, FPort, and base64 payload are correct in the stub's log.
 
 A test against the real TTN needs a registered device and a key in `backend/.env` (see `backend/.env.example`). Record it separately from the stubbed results. A 202 only proves that TTN queued the downlink; device receipt must be checked in the TTN console or on the device after its next uplink.
 
@@ -82,24 +88,30 @@ Branch `feature/backend` at `0f3db37`, Node 26.0.0, Express 5.3.0. The backend w
 - TTN 403 → 502 with `queued: false`, and the TTN response is logged.
 - `npm audit`: 0 vulnerabilities.
 
-**Backend — defects found**
+**Backend — defects found at `0f3db37`, all fixed afterwards**
 
-| #   | Input                                                   | Result                                                                                                                                                                                 |
-| --- | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| B1  | `command: "toString"` (any `Object.prototype` key)      | Passes the allowlist. Returns 202 with `hex: "[object Object]"` and queues an **empty** payload. Use `Object.hasOwn` or a `Map`.                                                       |
-| B2  | `setInterval` with missing or non-numeric `value`       | Returns 202 and queues an interval of **0 seconds** (`ff030000`).                                                                                                                      |
-| B3  | `setInterval` 70000 or −5                               | Unhandled `RangeError` → 500 HTML page with a stack trace.                                                                                                                             |
-| B4  | `devId` missing, or `devId: "../../otra-app/devices/x"` | Not validated or URL-encoded. A missing ID becomes `devices/undefined`. Dot segments are normalized, so the request can target **another application's** device with the server's key. |
-| B5  | Non-JSON body, or TTN unreachable                       | Unhandled error → 500 HTML with a stack trace and local file paths. The app's `res.json()` then fails and shows a JSON parse error.                                                    |
-| B6  | CORS preflight from `http://localhost:8081`             | No `Access-Control-Allow-Origin`, so the web preview cannot use the proxy.                                                                                                             |
-| B7  | `npm start` without `backend/.env`                      | `node: .env: not found`. Now documented in `backend/.env.example`.                                                                                                                     |
+| #   | Input                                                   | Result at `0f3db37`                                                                                                                                                                      | Fix                                                                     |
+| --- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| B1  | `command: "toString"` (any `Object.prototype` key)      | Passed the allowlist. Returned 202 with `hex: "[object Object]"` and queued an **empty** payload.                                                                                        | Commands in a `Map`; 400.                                               |
+| B2  | `setInterval` with missing or non-numeric `value`       | Returned 202 and queued an interval of **0 seconds** (`ff030000`).                                                                                                                       | Integer 1–65535 required; 400.                                          |
+| B3  | `setInterval` 70000 or −5                               | Unhandled `RangeError` → 500 HTML page with a stack trace.                                                                                                                               | Same validation; 400.                                                   |
+| B4  | `devId` missing, or `devId: "../../otra-app/devices/x"` | Not validated or URL-encoded. A missing ID became `devices/undefined`. Dot segments were normalized, so the request could target **another application's** device with the server's key. | TTN ID pattern + `encodeURIComponent`; 400.                             |
+| B5  | Non-JSON body, or TTN unreachable                       | Unhandled error → 500 HTML with a stack trace and local file paths. The app's `res.json()` then failed and showed a JSON parse error.                                                    | JSON error handler, 502 for network errors, 10 s timeout, safer client. |
+| B6  | CORS preflight from `http://localhost:8081`             | No `Access-Control-Allow-Origin`, so the web preview could not use the proxy.                                                                                                            | Opt-in `CORS_ORIGINS` allowlist.                                        |
+| B7  | `npm start` without `backend/.env`                      | `node: .env: not found`.                                                                                                                                                                 | `--env-file-if-exists` plus a clear missing-variable message.           |
 
-**Frontend**
+**Frontend at `0f3db37`, all fixed afterwards**
 
 - `npm run typecheck` passed.
-- `npm run lint` **failed**: the root Expo ESLint config also lints `backend/server.js` (`expo/no-env-var-destructuring` ×3, `Buffer` undefined ×2). `backend/` needs a Node config or an ignore entry.
-- `prettier --check` flags `backend/package.json`, `backend/server.js`, `downlinkApi.ts`, `SendDownlink.tsx`, and `SetupScreen.tsx`.
-- Playwright: 3 passed, **1 failed** (`profile setup validates input…`). In `SetupScreen.tsx`, the space before `{/* NUEVO… */}` after `<SendDownlink … />` renders a stray text node. React Native Web raises "Unexpected text node", and the error overlay covers the tab bar, so the `Rutas` tab click times out. The SOS "no external HTTP" check still passed because the button sends nothing until pressed.
+- `npm run lint` failed: `expo/no-env-var-destructuring` ×3 and `Buffer` undefined ×2 in `backend/server.js`. The fixed server reads `process.env` without destructuring and imports `Buffer` from `node:buffer`.
+- `prettier --check` flagged 5 files from the backend commit.
+- Playwright: 3 passed, 1 failed (`profile setup validates input…`). In `SetupScreen.tsx`, the space before `{/* NUEVO… */}` after `<SendDownlink … />` rendered a stray text node. React Native Web raised "Unexpected text node", and its error overlay covered the tab bar, so the `Rutas` tab click timed out. The comment is now on its own line.
+
+**After the fixes**
+
+- Backend `npm test`: 29 passed. `server.js` was smoke-tested with the fetch stub (202, 400 for `toString` and malformed JSON, and a 204 preflight with the allowed origin), and it exits with a clear message when the TTN variables are missing.
+- Root `npm run typecheck`, `npm run lint`, and `prettier --check .` passed.
+- Playwright: 4 of 4 passed.
 - No real TTN request, device downlink, or native device run was performed.
 
 ## Recorded validation — November 6, 2026

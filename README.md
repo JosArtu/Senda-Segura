@@ -51,9 +51,10 @@ cd backend
 npm ci
 cp .env.example .env   # then fill in TTN_APP_ID and TTN_API_KEY
 npm start              # listens on http://localhost:3000
+npm test               # backend tests; uses a fake TTN, no credentials needed
 ```
 
-Then, in a root `.env`, set `EXPO_PUBLIC_API_URL` to the server address as the phone sees it (for example `http://192.168.1.20:3000`), and restart Expo. Never commit either `.env` file. See [the downlink proxy](docs/architecture.md#lorawan-downlink-proxy) for the API and its limitations.
+Then, in a root `.env`, set `EXPO_PUBLIC_API_URL` to the server address as the phone sees it (for example `http://192.168.1.20:3000`), and restart Expo. To use it from the web preview, also add its origin to `CORS_ORIGINS` in `backend/.env`. Never commit either `.env` file. See [the downlink proxy](docs/architecture.md#lorawan-downlink-proxy) for the API and its limitations.
 
 ## Project structure
 

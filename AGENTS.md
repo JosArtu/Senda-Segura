@@ -16,4 +16,4 @@
 - Use regular product copy in the interface without prototype/demo labels, as requested. Document the disconnected implementation here and in the project docs. Requests must remain pending until a real transport can provide acknowledgment; do not claim rescue receipt.
 - Maintain Spanish UI copy, accessible labels, scrollable layouts, and usable cancellation/back paths. Avoid adding SafeReport's unrelated authentication/upload screens.
 - Read the architecture decisions and source context before implementing full-system features. Update documentation when a previously proposed contract or service becomes real.
-- Run type checking, lint, and relevant navigation checks after changes. Report native/hardware/field checks separately from browser results.
+- Run type checking, lint, and relevant navigation checks after changes. For changes in `backend/`, also run `npm test` there, and add a test for each new command or input field. Report native/hardware/field checks separately from browser results.

@@ -1,40 +1,23 @@
-import express from "express";
-const app = express();
-app.use(express.json());
+import { createApp } from './app.js';
 
-const { TTN_REGION = "nam1", TTN_APP_ID, TTN_API_KEY } = process.env;
+const env = process.env;
+const missing = ['TTN_APP_ID', 'TTN_API_KEY'].filter((name) => !env[name]);
+if (missing.length > 0) {
+  console.error(
+    `Faltan variables de entorno: ${missing.join(', ')}. Copia .env.example a .env y complétalo.`,
+  );
+  process.exit(1);
+}
 
-const COMMANDS = {
-  reboot: () => "ff10ff",
-  setInterval: (secs) => {
-    const b = Buffer.alloc(2);
-    b.writeUInt16LE(secs);
-    return "ff03" + b.toString("hex");
-  },
-};
-
-app.post("/api/downlink", async (req, res) => {
-  const { devId, command, value, confirmed = true } = req.body;
-  if (!COMMANDS[command]) return res.status(400).json({ error: "Comando no permitido" });
-
-  const hex = COMMANDS[command](value);
-  const url = `https://${TTN_REGION}.cloud.thethings.network/api/v3/as/applications/${TTN_APP_ID}/devices/${devId}/down/push`;
-
-  const r = await fetch(url, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${TTN_API_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      downlinks: [{
-        f_port: 85,
-        frm_payload: Buffer.from(hex, "hex").toString("base64"),
-        priority: "NORMAL",
-        confirmed,
-      }],
-    }),
-  });
-  const ttnBody = await r.text();
-    if (!r.ok) console.log("TTN respondió", r.status, ttnBody);
-    res.status(r.ok ? 202 : 502).json({ queued: r.ok, hex, ttnStatus: r.status, ttnBody });
+const app = createApp({
+  region: env.TTN_REGION || 'nam1',
+  appId: env.TTN_APP_ID,
+  apiKey: env.TTN_API_KEY,
+  corsOrigins: (env.CORS_ORIGINS ?? '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean),
 });
 
-app.listen(3000, () => console.log("Servidor escuchando en http://localhost:3000"));
+const port = Number(env.PORT) || 3000;
+app.listen(port, () => console.log(`Servidor escuchando en http://localhost:${port}`));

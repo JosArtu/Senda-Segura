@@ -23,7 +23,8 @@ export default function SetupScreen() {
       </Text>
       <ProfileForm submitLabel="Guardar y explorar" onSaved={explore} />
       <PermissionControls />
-      <SendDownlink devId="prueba-abp" /> {/* NUEVO, temporal para la prueba */}
+      {/* NUEVO, temporal para la prueba */}
+      <SendDownlink devId="prueba-abp" />
       <Button label="Continuar sin perfil" variant="secondary" onPress={explore} />
     </Screen>
   );
