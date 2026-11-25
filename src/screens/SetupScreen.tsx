@@ -4,6 +4,7 @@ import { Text } from 'react-native';
 import { PermissionControls } from '@/components/PermissionControls';
 import { ProfileForm } from '@/components/ProfileForm';
 import { Screen } from '@/components/Screen';
+import SendDownlink from '@/components/SendDownlink';
 import { Button } from '@/components/ui';
 import { shared } from '@/constants/theme';
 import { useDemoSession } from '@/hooks/useDemoSession';
@@ -22,6 +23,7 @@ export default function SetupScreen() {
       </Text>
       <ProfileForm submitLabel="Guardar y explorar" onSaved={explore} />
       <PermissionControls />
+      <SendDownlink devId="prueba-abp" /> {/* NUEVO, temporal para la prueba */}
       <Button label="Continuar sin perfil" variant="secondary" onPress={explore} />
     </Screen>
   );

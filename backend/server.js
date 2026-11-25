@@ -32,7 +32,9 @@ app.post("/api/downlink", async (req, res) => {
       }],
     }),
   });
-  res.status(r.ok ? 202 : 502).json({ queued: r.ok, hex });
+  const ttnBody = await r.text();
+    if (!r.ok) console.log("TTN respondió", r.status, ttnBody);
+    res.status(r.ok ? 202 : 502).json({ queued: r.ok, hex, ttnStatus: r.status, ttnBody });
 });
 
 app.listen(3000, () => console.log("Servidor escuchando en http://localhost:3000"));
